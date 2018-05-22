@@ -73,8 +73,18 @@ class largenumber
 					int op2 = number.data[operandlen]-'0';
 					
 					int res = op1+op2+carry;
-					int sum = res%10;
-					carry = res/10;
+					int sum;
+
+					if (res>=10)
+					{
+						sum = res-10;
+						carry = 1;
+					}
+					else
+					{
+						sum=res;
+						carry=0;	
+					}
 
 					result.push_back(sum+'0');
 
@@ -86,8 +96,20 @@ class largenumber
 					int op1 = data[thislen]-'0';
 
 					int res = op1+carry;
-					int sum = res%10;
-					carry = res/10;
+					int sum;
+
+                                        if (res>=10)
+                                        {
+                                                sum = res-10;
+                                                carry = 1;
+                                        }
+                                        else
+                                        {
+                                                sum=res;
+                                                carry=0;
+                                        }
+
+
 
 					result.push_back(sum+'0');
 	
@@ -98,8 +120,20 @@ class largenumber
 					int op2 = number.data[operandlen]-'0';
 					
 					int res = op2+carry;
-                                        int sum = res%10;
-                                        carry = res/10;
+					int sum;
+
+                                        if (res>=10)
+                                        {
+                                                sum = res-10;
+                                                carry = 1;
+                                        }
+                                        else
+                                        {
+                                                sum=res;
+                                                carry=0;
+                                        }
+
+
 
 					result.push_back(sum+'0');
 
@@ -184,6 +218,43 @@ class largenumber
 
 		friend ostream& operator<< (ostream &os, const largenumber& number);
 
+		largenumber operator*(const largenumber& number)
+		{
+			int thislen=data.length();
+                        int operandlen=number.data.length();
+
+			string operand1=data;
+			string operand2=number.data;
+
+			largenumber answer("0");
+			for(int i=operandlen-1;i>=0;i--)
+			{
+				int op1=operand2[i]-'0'; 	
+				
+				int thislen=operand1.length()-1;
+				int carry=0;
+				string intermediate;
+				while(thislen>=0)
+				{
+					int op2=operand1[thislen--]-'0';
+					int result = (op1*op2)+carry;
+					int sum=result%10;
+					carry=result/10;
+					
+					intermediate.push_back(sum+'0');
+				}
+				if (carry!=0)
+					intermediate.push_back(carry+'0');
+
+				reverse(intermediate.begin(),intermediate.end());
+
+				answer+=intermediate;
+				operand1.push_back(0+'0');
+			}
+
+			return answer;
+		}
+
 };
 
 ostream& operator<< (ostream &os, const largenumber& number)
@@ -194,13 +265,10 @@ ostream& operator<< (ostream &os, const largenumber& number)
 
 int main()
 {
-	largenumber n1(string("999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"));
-	largenumber n2(string("999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"));
+	largenumber n1(string("9999999999999"));
+	largenumber n2(string("10"));
 
-	for (largenumber x=n2;x<n1;x++)
-	{
-		cout << x <<endl;
-	}
+		cout << n1*n2 <<endl;
 	
 
 }
