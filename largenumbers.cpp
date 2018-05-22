@@ -255,6 +255,13 @@ class largenumber
 			return answer;
 		}
 
+                largenumber& operator*=(const largenumber& number)
+                {
+                        largenumber result=this->operator*(number);
+                        return this->operator=(result);
+                }
+
+
 };
 
 ostream& operator<< (ostream &os, const largenumber& number)
@@ -265,10 +272,11 @@ ostream& operator<< (ostream &os, const largenumber& number)
 
 int main()
 {
-	largenumber n1(string("9999999999999"));
-	largenumber n2(string("10"));
+	largenumber n1(string("99999999999999999999999999999999999999999999999999999999999999999999999999"));
+	largenumber n2(string("1017230988098097623161348123767234781823461782316523651902367861278346"));
 
-		cout << n1*n2 <<endl;
-	
+	n1*=n2;
+
+	cout << n1;	
 
 }
