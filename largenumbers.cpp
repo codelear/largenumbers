@@ -305,6 +305,9 @@ class largenumber
 
 			/*
  			* we add only when both the numbers are negative
+ 			* so first char of both numbers will be negative
+ 			* we need to check the first one only as the second
+ 			* will be the same sign as the first one to be added
  			*/
 			if ((operand1[0]=='-')) 
 			{
