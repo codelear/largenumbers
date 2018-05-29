@@ -8,6 +8,35 @@ class largenumber
 {
 	string data;
 
+	void removeleadingzeros()
+	{
+		int startpos=0;
+		if (data[0]=='-')
+		{
+			startpos=1;
+		}
+		int len=data.length();
+
+		for (int i=startpos;i<len;i++)
+		{
+			if ((data[i]=='0')||(data[i]=='+'))	
+			{
+				data.erase(i,1);
+				len=len-1;
+				i=startpos-1;
+			}
+			else
+			{
+				break;
+			}
+		}
+		if (len==0)
+		{
+			data.append("0");	
+		}
+		
+	}
+
 	int compare(const largenumber& number)
 	{
 
@@ -35,8 +64,16 @@ class largenumber
 			return -1;
 		}
 
-                int operand1len=data.length();
-                int operand2len=number.data.length();		
+		largenumber op1=*this;
+		op1.removeleadingzeros();
+		largenumber op2=number;
+		op2.removeleadingzeros();
+
+                int operand1len=op1.data.length();
+                int operand2len=op2.data.length();		
+
+		operand1=op1.data;
+                operand2=op2.data;
 
 		int operand1start=0;
 		int operand2start=0;	
@@ -315,7 +352,11 @@ class largenumber
 			}
 	
 			reverse(result.begin(),result.end());
-			return largenumber(result);
+			
+			largenumber res(result);
+			res.removeleadingzeros();
+			return res;
+			
 		}
 
 		largenumber& operator+=(const largenumber& number)
@@ -419,16 +460,22 @@ class largenumber
                                 operand2start=1;
                         }
 
+			bool isnegative=false;
+			if (((operand1[0]=='-') && (operand2[0]!='-'))||((operand1[0]!='-')&& (operand2[0]=='-')))
+			{
+				isnegative=true;	
+			}
+		
 
 			largenumber answer("0");
-			for(int i=operand2len-1;i>=0;i--)
+			for(int i=operand2len-1;i>=operand2start;i--)
 			{
 				int op1=operand2[i]-'0'; 	
 				
 				int operand1len=operand1.length()-1;
 				int carry=0;
 				string intermediate;
-				while(operand1len>=0)
+				while(operand1len>=operand1start)
 				{
 					int op2=operand1[operand1len--]-'0';
 					int result = (op1*op2)+carry;
@@ -445,8 +492,144 @@ class largenumber
 				answer+=intermediate;
 				operand1.push_back(0+'0');
 			}
-
+			if (isnegative)
+			{
+				answer=-answer;
+			}
 			return answer;
+		}
+
+		largenumber operator/(const largenumber& number)
+		{
+			/*
+ 			* dividend
+ 			* --------
+ 			*  divisor
+ 			*/
+                        int dividendlen=data.length();
+                        int divisorlen=number.data.length();
+
+			
+                        int dividendstart=0;
+                        int divisorstart=0;
+
+                        if ((data[0]=='+') || (data[0]=='-'))
+                        {
+                                dividendstart=1;
+                        }
+
+                        if ((number.data[0]=='+') || (number.data[0]=='-'))
+                        {
+                                divisorstart=1;
+                        }
+
+                        bool isnegative=false;
+                        if (((data[0]=='-') && (number.data[0]!='-'))||((data[0]!='-')&& (number.data[0]=='-')))
+                        {
+                                isnegative=true;
+                        }
+
+			largenumber dividend=this->abs();
+			largenumber divisor=number.abs();
+
+			string result="0";
+			bool done=false;
+			int increasedividentlen=0;
+			largenumber temp(string(dividend.data,0,divisorlen-divisorstart+increasedividentlen));
+			int toerase=divisorlen-divisorstart+increasedividentlen;
+			while ((!done))
+			{
+				bool found=false;	
+				largenumber multiplier;
+				largenumber prev("0");
+				int j;
+				for(j=1;j<=10&&!found;j++)	
+				{
+					string x;
+					x.push_back(j+'0');
+					largenumber mul(x);
+					multiplier=divisor*mul;
+					if (multiplier>temp)
+					{
+						multiplier=prev;
+						//if divisor*1 > temp then the divisor is bigger break and consider the next digit also
+						if (j==1) break;
+						found=true;
+					}
+					else
+					{
+						prev=multiplier;
+					}
+
+				}
+
+				largenumber diff;
+				int difflen;
+				if (found)
+				{
+					result.push_back((j-2)+'0');
+					diff=temp-multiplier;
+					string value=dividend.data;
+					value.erase(0,toerase);
+					if (!value.empty()) 
+					{
+						if (diff!=largenumber("0"))
+						{
+							string diffval=diff.data;
+							value.insert(dividendstart,diffval);
+						}
+						dividend.data=value;
+						largenumber zero("0");
+						if (dividend==zero)
+						{
+							result.append(dividend.data);
+							done=true;
+						}
+						difflen=diff.data.length();
+					}
+					else
+					{
+						done=true;
+					}
+				}
+				else
+				{
+					result.push_back(0+'0');
+					difflen=temp.data.length();
+				}
+				increasedividentlen=1;
+				temp=largenumber(string(dividend.data,0,difflen+increasedividentlen));	
+				while ((temp<divisor) && (!done))
+                                {
+                                	increasedividentlen++;
+                                	if (difflen+increasedividentlen>dividend.data.length())
+                                	{
+                                		done=true;
+                                	}
+                                	else
+                                	{
+                                		temp=largenumber(string(dividend.data,0,difflen+increasedividentlen));
+                                		result.push_back(0+'0');
+                                	}
+                                }
+				toerase=difflen+increasedividentlen;
+				
+			}
+			if (isnegative)
+			{
+				result.insert(0,"-");
+			}
+			largenumber res(result);			
+
+			res.removeleadingzeros();
+			
+			return res;
+		}
+
+		largenumber& operator/=(const largenumber& number)
+		{
+			largenumber result=this->operator/(number);
+                        return this->operator=(result);
 		}
 
                 largenumber& operator*=(const largenumber& number)
@@ -549,7 +732,10 @@ class largenumber
 
 			reverse(result.begin(),result.end());
 
-			return result;
+                        largenumber res(result);
+                        res.removeleadingzeros();
+                        return res;
+
 	
 		}
 
@@ -587,13 +773,11 @@ ostream& operator<< (ostream &os, const largenumber& number)
 
 int main()
 {
-	largenumber n1(string("9"));
-	largenumber n2(string("-2000"));
-	largenumber n3(string("19"));
+	largenumber n1(string("782378231234567891011121314151617181920"));
+	largenumber n2(string("56236792873822392123"));
 
 
-
-	cout << (n2+n1) << endl;
+	cout << (n1/n2) << endl;
 
 
 
