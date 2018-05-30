@@ -513,16 +513,6 @@ class largenumber
                         int dividendstart=0;
                         int divisorstart=0;
 
-                        if ((data[0]=='+') || (data[0]=='-'))
-                        {
-                                dividendstart=1;
-                        }
-
-                        if ((number.data[0]=='+') || (number.data[0]=='-'))
-                        {
-                                divisorstart=1;
-                        }
-
                         bool isnegative=false;
                         if (((data[0]=='-') && (number.data[0]!='-'))||((data[0]!='-')&& (number.data[0]=='-')))
                         {
@@ -613,7 +603,6 @@ class largenumber
                                 	}
                                 }
 				toerase=difflen+increasedividentlen;
-				
 			}
 			if (isnegative)
 			{
@@ -773,11 +762,11 @@ ostream& operator<< (ostream &os, const largenumber& number)
 
 int main()
 {
-	largenumber n1(string("782378231234567891011121314151617181920"));
-	largenumber n2(string("56236792873822392123"));
+	largenumber n1(string("78236783467856782357438134878634786238456782634587627834657862345786782356782634675126582899835489734895728973458972358972893457892743589724839578294735897234588293745892734895702983475089723458967823456672567456256523465672354623402934950292378231234567891011121314151617181920"));
+	largenumber n2(string("-5623679287382239212767864782687678246345234564256345642323652467524589298924635924735678623457863457783456783567023909820393"));
 
 
-	cout << (n1/n2) << endl;
+	cout << n2*n1/n2 << endl;
 
 
 
