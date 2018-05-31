@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class largenumber
@@ -556,7 +557,7 @@ class largenumber
 					}
 				}
 				largenumber diff;
-				int difflen;
+				int difflen=0;
 				if (found)
 				{
 					result.push_back((j-2)+'0');
@@ -569,6 +570,7 @@ class largenumber
 						{
 							string diffval=diff.data;
 							value.insert(dividendstart,diffval);
+							difflen=diff.data.length();
 						}
 						dividend.data=value;
 						largenumber zero("0");
@@ -577,7 +579,6 @@ class largenumber
 							result.append(dividend.data);
 							done=true;
 						}
-						difflen=diff.data.length();
 					}
 					else
 					{
@@ -615,6 +616,16 @@ class largenumber
 			res.removeleadingzeros();
 			
 			return res;
+		}
+
+
+		largenumber operator%(const largenumber& number)
+		{
+			
+			largenumber div = *this / number;
+			
+			return (*this) - ( div * number);
+
 		}
 
 		largenumber& operator/=(const largenumber& number)
@@ -761,6 +772,7 @@ ostream& operator<< (ostream &os, const largenumber& number)
 	os << number.data;
 	return os;
 }
+
 
 int main()
 {
