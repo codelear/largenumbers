@@ -506,9 +506,6 @@ class largenumber
  			* --------
  			*  divisor
  			*/
-                        int dividendlen=data.length();
-                        int divisorlen=number.data.length();
-
 			
                         int dividendstart=0;
                         int divisorstart=0;
@@ -521,6 +518,9 @@ class largenumber
 
 			largenumber dividend=this->abs();
 			largenumber divisor=number.abs();
+	
+			int dividendlen=dividend.data.length();
+                        int divisorlen=divisor.data.length();
 
 			string result="0";
 			bool done=false;
@@ -533,26 +533,28 @@ class largenumber
 				largenumber multiplier;
 				largenumber prev("0");
 				int j;
-				for(j=1;j<=10&&!found;j++)	
+				if (temp>=divisor)
 				{
-					string x;
-					x.push_back(j+'0');
-					largenumber mul(x);
-					multiplier=divisor*mul;
-					if (multiplier>temp)
+					for(j=1;j<=10&&!found;j++)	
 					{
-						multiplier=prev;
+						string x;
+						x.push_back(j+'0');
+						largenumber mul(x);
+						multiplier=divisor*mul;
+						if (multiplier>temp)
+						{
+							multiplier=prev;
 						//if divisor*1 > temp then the divisor is bigger break and consider the next digit also
-						if (j==1) break;
-						found=true;
-					}
-					else
-					{
-						prev=multiplier;
-					}
+							if (j==1) break;
+							found=true;
+						}
+						else
+						{	
+							prev=multiplier;
+						}
 
+					}
 				}
-
 				largenumber diff;
 				int difflen;
 				if (found)
@@ -765,8 +767,9 @@ int main()
 	largenumber n1(string("78236783467856782357438134878634786238456782634587627834657862345786782356782634675126582899835489734895728973458972358972893457892743589724839578294735897234588293745892734895702983475089723458967823456672567456256523465672354623402934950292378231234567891011121314151617181920"));
 	largenumber n2(string("-5623679287382239212767864782687678246345234564256345642323652467524589298924635924735678623457863457783456783567023909820393"));
 
-
-	cout << n2*n1/n2 << endl;
+	
+		n1=n1/n2;
+		cout <<n1<<endl;
 
 
 
